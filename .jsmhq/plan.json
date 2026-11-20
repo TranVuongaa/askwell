@@ -5,7 +5,198 @@
       "title": "Backlog",
       "status": "active",
       "order": 0
+    },
+    {
+      "id": "P0S",
+      "title": "Phase 0 — Setup",
+      "status": "active",
+      "order": 1
+    },
+    {
+      "id": "P1F",
+      "title": "Phase 1 — Foundation",
+      "status": "active",
+      "order": 2
     }
   ],
-  "tasks": []
+  "tasks": [
+    {
+      "id": "P0S-T01",
+      "boardId": "P0S",
+      "title": "Scaffold app and verify Vercel preview",
+      "ownerId": "tho-ca",
+      "status": "done",
+      "needs": [],
+      "prNumber": 1,
+      "description": "Build the complete Phase 0 setup in one branch and one PR so the empty app builds and deploys. Read docs/project.md §3, §4, §10, and §11, plus docs/plan.md Phase 0 and CLAUDE.md. Scaffold the pnpm monorepo with apps/web (Next.js App Router, TypeScript, Tailwind), apps/widget (vanilla TypeScript package shell), packages/shared and packages/db (package shells; no database schema or migration yet). Set up root scripts for pnpm dev, typecheck, lint, test, and build. Add a minimal home page, appropriate package and TypeScript config, .gitignore, and .env.example listing every variable in §11 with no values. Keep secrets out of the repo. Run all required checks. Open one PR; after the product owner connects the repository to Vercel with automatic promotion off, check the actual PR preview URL and load the home page there. Record the preview URL and checks in the PR. The product owner handles Vercel account/project settings and the protection bypass variable; coordinate through HQ and do not request or paste secret values.",
+      "files": [
+        "apps/web",
+        "apps/widget",
+        "packages/shared",
+        "packages/db",
+        "package.json",
+        "pnpm-workspace.yaml",
+        "pnpm-lock.yaml",
+        "tsconfig.base.json",
+        ".gitignore",
+        ".env.example",
+        ".npmrc"
+      ],
+      "doneWhen": "pnpm typecheck, pnpm lint, pnpm test, and pnpm build all pass; the PR has a Vercel preview URL; the home page loads on that preview; the PR states checks and preview URL.",
+      "note": "PR #1 is open and checks pass. Vercel is not connected yet: GitHub has no PR deployment/preview URL, and VERCEL_AUTOMATION_BYPASS_SECRET is not present. Product-owner action item aimwkgfow52 is pending."
+    },
+    {
+      "id": "P1F-T01",
+      "boardId": "P1F",
+      "title": "Shared API contract and dependencies",
+      "ownerId": "tho-ca",
+      "status": "done",
+      "needs": [],
+      "prNumber": 3,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §5, §7, §8 and CLAUDE.md. Build packages/shared as the single source for APP_NAME, Free/Pro PLAN_LIMITS, and request/response types with neighboring zod input schemas for every route listed in §8, including standard API errors. Add pure-function/schema tests. Add the Phase 1 Clerk, Supabase, zod, and pglite dependencies to the relevant package manifests and lockfile up front so later tasks do not contend over manifests. Do not implement routes or database schema here. Explain any new dependencies in the PR.",
+      "files": [
+        "packages/shared",
+        "apps/web/package.json",
+        "packages/db/package.json",
+        "package.json",
+        "pnpm-lock.yaml"
+      ],
+      "doneWhen": "Shared exports cover each §8 route and §5 plan limits; schema tests pass; pnpm typecheck, lint, test, and build pass; one PR is opened with the required preview/check notes.",
+      "note": "All local checks pass. Vercel preview returned HTTP 200 and the homepage contains Askwell; preview URL and result added to PR #3."
+    },
+    {
+      "id": "P1F-T02",
+      "boardId": "P1F",
+      "title": "Landing page",
+      "ownerId": "tho-phu",
+      "status": "done",
+      "needs": [],
+      "prNumber": 2,
+      "description": "Lane B, owned by Tho phu. Read docs/project.md §5, §6.1, §13 and CLAUDE.md. Replace the Phase 0 home page with the responsive dark landing page: hero, three-step explanation, Free/Pro pricing matching §5, illustrative install snippet, CTA to /sign-up, and footer. Add shared design tokens and subtle entrance/scroll motion. Use APP_NAME already exported by @askwell/shared on main. Phase 1 calls for a static page; reserve the real widget demo for Phase 6. Use static display data where later features do not exist. Follow apps/web/AGENTS.md and the installed Next/React skills before coding.",
+      "files": [
+        "apps/web/app/page.tsx",
+        "apps/web/app/globals.css",
+        "apps/web/app/layout.tsx",
+        "apps/web/components/landing",
+        "apps/web/public"
+      ],
+      "doneWhen": "Landing page sections and prices match §5 and §6.1; CTA targets sign-up; page works at 375 px and desktop with no horizontal overflow; required pnpm checks pass; preview loads; one PR is opened.",
+      "note": "Vercel preview bypass is set and verified: PR #2 preview responds 200, renders the landing page, pricing/steps content, and sign-up links. No code changes needed."
+    },
+    {
+      "id": "P1F-T03",
+      "boardId": "P1F",
+      "title": "Database schema and RLS",
+      "ownerId": "tho-ca",
+      "status": "done",
+      "needs": [
+        "P1F-T01"
+      ],
+      "prNumber": 5,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §7, §9 and CLAUDE.md. After P1F-T01 lands, add an additive SQL migration for all seven §7 tables, pgvector column/index, required constraints, RLS policies, grants, and narrowly scoped ownership helpers. Include the pglite test helper with Supabase role stubs and tests proving anon has no table/function access and owners cannot read another owner's rows. Keep packages/db/types.ts aligned with the migration in this PR. Never apply an unmerged migration to shared dev. Use the installed supabase and supabase-postgres-best-practices skills. After merge, apply this exact migration to dev through the Supabase MCP, regenerate types, and confirm no diff before closing the task.",
+      "files": [
+        "supabase/migrations",
+        "packages/db",
+        "pnpm-lock.yaml"
+      ],
+      "doneWhen": "Migration applies and tests pass on pglite; seven tables have RLS/grants and required constraints; cross-owner/anon access tests pass; pnpm checks pass; one PR is opened; after merge the migration is recorded on dev and regenerated types show no diff.",
+      "note": "PR #5 opened; PGlite tests and all pnpm checks pass. Awaiting Vercel preview check and post-merge dev migration."
+    },
+    {
+      "id": "P1F-T04",
+      "boardId": "P1F",
+      "title": "Database functions and plan limits",
+      "ownerId": null,
+      "status": "todo",
+      "needs": [
+        "P1F-T03",
+        "P1F-T08"
+      ],
+      "prNumber": null,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §5, §7, §9 and CLAUDE.md. After P1F-T03 lands and its migration is on dev, add a new additive migration with create_project, reserve_knowledge_source, consume_message, save_chat_turn, match_chunks, and owner_activity. Enforce §5 plan limits from passed PLAN_LIMITS values inside the counting functions under row locks or atomic statements. Restrict EXECUTE by role and use empty search_path as §9 requires. Add pglite tests for Free/Pro limits, concurrency-safe counts, project-scoped retrieval, and grants; update packages/db/types.ts for RPC signatures. Never edit the earlier migration or apply this one to shared dev before merge. After merge, apply through the Supabase MCP and confirm regenerated types show no diff.",
+      "files": [
+        "supabase/migrations",
+        "packages/db"
+      ],
+      "doneWhen": "All six §7 functions exist with correct role grants; pglite tests cover limits and tenant scope; pnpm checks pass; one PR is opened; after merge migration is recorded on dev and regenerated types show no diff.",
+      "note": null
+    },
+    {
+      "id": "P1F-T05",
+      "boardId": "P1F",
+      "title": "Supabase owner and service clients",
+      "ownerId": "tho-ca",
+      "status": "done",
+      "needs": [
+        "P1F-T03"
+      ],
+      "prNumber": 6,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §7, §9, §11 and CLAUDE.md. After the schema task lands, implement createOwnerClient() using the caller's Clerk session token so RLS applies, and createServiceClient() as a server-only module for checked writes. Use generated database types and @supabase/supabase-js; fail clearly when required environment variables are absent. Keep service credentials out of client bundles and NEXT_PUBLIC variables. Add focused tests for token wiring and server-only import boundaries. Use the installed supabase and Clerk Next.js skills and current docs.",
+      "files": [
+        "apps/web/lib/supabase"
+      ],
+      "doneWhen": "Owner client sends the Clerk token and relies on RLS; service client is server-only; focused tests and all pnpm checks pass; one PR is opened and preview loads.",
+      "note": "PR #6 preview checked (HTTP 200); waiting on P1F-T08 generated types before merge and rerun of checks."
+    },
+    {
+      "id": "P1F-T06",
+      "boardId": "P1F",
+      "title": "Dashboard shell",
+      "ownerId": "tho-phu",
+      "status": "done",
+      "needs": [
+        "P1F-T02"
+      ],
+      "prNumber": 4,
+      "description": "Lane B, owned by Tho phu. Read docs/project.md §6.2, §13 and CLAUDE.md. Build an empty light dashboard layout with navigation to Projects, Knowledge, Conversations, Customize, Install, and Billing, responsive down to 375 px. Include empty/loading/error presentation where applicable and reusable monochrome glass components. Do not connect database data yet; use static placeholders for project-specific destinations until Phase 2+. The later auth task will protect this route and add the signed-in account controls. Use the design tokens from P1F-T02 and the installed Next/React skills.",
+      "files": [
+        "apps/web/app/dashboard",
+        "apps/web/components/dashboard"
+      ],
+      "doneWhen": "Dashboard renders an empty state and navigation at 375 px and desktop; no live-data assumptions; all pnpm checks pass; preview loads; one PR is opened.",
+      "note": "PR #4 opened for P1F-T06; checks pass. Checking Vercel preview now."
+    },
+    {
+      "id": "P1F-T07",
+      "boardId": "P1F",
+      "title": "Clerk sign-in and account bootstrap",
+      "ownerId": "tho-phu",
+      "status": "in-progress",
+      "needs": [
+        "P1F-T05",
+        "P1F-T06"
+      ],
+      "prNumber": null,
+      "description": "Lane B, owned by Tho phu. Read docs/project.md §6.2, §7, §9, §13 and CLAUDE.md. After P1F-T05 and P1F-T06 land, add Clerk provider, Clerk default sign-in/sign-up pages, and current Next.js middleware/proxy protection for /dashboard/* and owner API routes. Support email/password and Google as configured by the product owner. On first authenticated dashboard visit, idempotently create an accounts row for the Clerk user ID with plan free through the server-only service client; never overwrite an existing paid plan. Add sign-out and route tests. Use the installed clerk, clerk-nextjs-patterns, supabase, and Next skills with current docs. For local tests before keys are available, mock Clerk and Supabase at the boundary; do not hard-code keys.",
+      "files": [
+        "apps/web/app/layout.tsx",
+        "apps/web/app/sign-in",
+        "apps/web/app/sign-up",
+        "apps/web/app/dashboard",
+        "apps/web/components/dashboard",
+        "apps/web/lib/auth",
+        "apps/web/middleware.ts",
+        "apps/web/proxy.ts"
+      ],
+      "doneWhen": "With test keys configured, new email and Google sign-ups land on the dashboard with one free accounts row; repeat sign-in does not reset plan; sign-out redirects to sign-in; owner routes reject signed-out requests; tests and pnpm checks pass; preview loads; one PR is opened.",
+      "note": null
+    },
+    {
+      "id": "P1F-T08",
+      "boardId": "P1F",
+      "title": "Regenerate Supabase database types",
+      "ownerId": "tho-ca",
+      "status": "done",
+      "needs": [
+        "P1F-T03"
+      ],
+      "prNumber": 7,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §7 and §9, and CLAUDE.md. The merged schema migration 20261120093243_initial_schema is now recorded on the shared Supabase dev project, but packages/db/types.ts was hand-written and does not match the MCP generator. On a new branch from main, use the Supabase MCP type generator scoped to dev to replace packages/db/types.ts with its actual output; do not hand-narrow CHECK-constrained text columns. Regenerate again and confirm the file has no diff. Do not change the merged migration, packages/shared, or the dev schema. This correction must merge before P1F-T05 so its clients compile against the real generated types. Use the installed Supabase skill.",
+      "files": [
+        "packages/db/types.ts"
+      ],
+      "doneWhen": "MCP-generated types match packages/db/types.ts with no diff on a second generation; pnpm typecheck, lint, test, and build pass; one PR is opened and its Vercel preview is checked.",
+      "note": "PR #7 open. MCP-generated types match on repeat; typecheck, lint, test, build pass. Vercel skipped deployment as Not affected, so no preview URL was available; noted in PR."
+    }
+  ]
 }

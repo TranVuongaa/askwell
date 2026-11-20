@@ -36,7 +36,9 @@
           "eu.i.posthog.com",
           "us-assets.i.posthog.com",
           "docs.arcjet.com",
-          "decide.arcjet.com"
+          "decide.arcjet.com",
+          "askwell-eight.vercel.app",
+          "*.vercel.app"
         ],
         "deny": []
       },
@@ -71,7 +73,10 @@
           "eu.i.posthog.com",
           "us-assets.i.posthog.com",
           "docs.arcjet.com",
-          "decide.arcjet.com"
+          "decide.arcjet.com",
+          "askwell-eight.vercel.app",
+          "*.vercel.app",
+          "askwell-git-p1f-t01-shared-api-contract-mns-projects-a6d194ae.vercel.app:443"
         ],
         "deny": []
       },
@@ -106,7 +111,9 @@
           "eu.i.posthog.com",
           "us-assets.i.posthog.com",
           "docs.arcjet.com",
-          "decide.arcjet.com"
+          "decide.arcjet.com",
+          "askwell-eight.vercel.app",
+          "*.vercel.app"
         ],
         "deny": []
       },
