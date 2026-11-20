@@ -20,7 +20,7 @@ create index projects_owner_id_idx on public.projects (owner_id);
 
 create table public.widget_configs (
   project_id uuid primary key references public.projects (id) on delete cascade,
-  button_color text not null default '#2563eb' check (button_color ~ '^#[0-9A-Fa-f]{6}$'),
+  button_color text not null default '#000000' check (button_color ~ '^#[0-9A-Fa-f]{6}$'),
   position text not null default 'bottom-right' check (position in ('bottom-right', 'bottom-left', 'top-right', 'top-left')),
   label text not null default 'Chat with us' check (length(btrim(label)) between 1 and 80),
   animation text not null default 'fade' check (animation in ('fade', 'slide', 'scale')),

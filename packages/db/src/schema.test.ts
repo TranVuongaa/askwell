@@ -61,6 +61,8 @@ describe('initial schema permissions', () => {
 
   it('allows server writes and rejects a chunk linked to a source in another project', async () => {
     await asRole(db, 'service_role');
+    expect((await db.query('select button_color from public.widget_configs where project_id = $1', [a])).rows)
+      .toEqual([{ button_color: '#000000' }]);
     expect((await db.query("update public.projects set name = 'Server' where id = $1 returning id", [b])).rows).toHaveLength(1);
     await expect(db.query(
       "insert into public.knowledge_chunks (project_id, source_id, content, embedding) values ($1, '66666666-6666-4666-8666-666666666666', 'wrong project', $2)",
