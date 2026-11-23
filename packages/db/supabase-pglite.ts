@@ -3,7 +3,10 @@ import { fileURLToPath } from 'node:url';
 import { PGlite } from '@electric-sql/pglite';
 import { vector } from '@electric-sql/pglite-pgvector';
 
-const migrationUrl = new URL('../../supabase/migrations/20261120093243_initial_schema.sql', import.meta.url);
+const migrationUrls = [
+  new URL('../../supabase/migrations/20261120093243_initial_schema.sql', import.meta.url),
+  new URL('../../supabase/migrations/20261123120000_database_functions.sql', import.meta.url),
+];
 
 /** A disposable Supabase-like database for migration and RLS tests only. */
 export async function createSupabasePglite(): Promise<PGlite> {
@@ -21,7 +24,9 @@ export async function createSupabasePglite(): Promise<PGlite> {
     grant execute on function auth.jwt() to authenticated;
     grant usage on schema public to anon, authenticated, service_role;
   `);
-  await db.exec(await readFile(fileURLToPath(migrationUrl), 'utf8'));
+  for (const migrationUrl of migrationUrls) {
+    await db.exec(await readFile(fileURLToPath(migrationUrl), 'utf8'));
+  }
   return db;
 }
 

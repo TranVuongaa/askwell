@@ -244,7 +244,56 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      consume_message: {
+        Args: { p_max_messages: number; p_project_id: string }
+        Returns: number
+      }
+      create_project: {
+        Args: {
+          p_max_projects: number
+          p_name: string
+          p_owner_id: string
+          p_public_key: string
+        }
+        Returns: Database["public"]["Tables"]["projects"]["Row"]
+      }
+      match_chunks: {
+        Args: { p_embedding: string; p_match_count?: number; p_project_id: string }
+        Returns: {
+          content: string
+          id: string
+          similarity: number
+          source_id: string
+        }[]
+      }
+      owner_activity: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          conversation_count: number
+          message_count: number
+          project_count: number
+        }[]
+      }
+      reserve_knowledge_source: {
+        Args: {
+          p_max_sources: number
+          p_project_id: string
+          p_storage_key: string | null
+          p_title: string
+          p_type: string
+        }
+        Returns: Database["public"]["Tables"]["knowledge_sources"]["Row"]
+      }
+      save_chat_turn: {
+        Args: {
+          p_bot_reply: string
+          p_conversation_id: string | null
+          p_project_id: string
+          p_visitor_id: string
+          p_visitor_message: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
