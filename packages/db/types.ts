@@ -255,10 +255,28 @@ export type Database = {
           p_owner_id: string
           p_public_key: string
         }
-        Returns: Database["public"]["Tables"]["projects"]["Row"]
+        Returns: {
+          created_at: string
+          id: string
+          messages_used: number
+          name: string
+          owner_id: string
+          period_start: string
+          public_key: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "projects"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       match_chunks: {
-        Args: { p_embedding: string; p_match_count?: number; p_project_id: string }
+        Args: {
+          p_embedding: string
+          p_match_count?: number
+          p_project_id: string
+        }
         Returns: {
           content: string
           id: string
@@ -267,7 +285,7 @@ export type Database = {
         }[]
       }
       owner_activity: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           conversation_count: number
           message_count: number
@@ -278,16 +296,30 @@ export type Database = {
         Args: {
           p_max_sources: number
           p_project_id: string
-          p_storage_key: string | null
+          p_storage_key: string
           p_title: string
           p_type: string
         }
-        Returns: Database["public"]["Tables"]["knowledge_sources"]["Row"]
+        Returns: {
+          created_at: string
+          id: string
+          project_id: string
+          status: string
+          storage_key: string | null
+          title: string
+          type: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "knowledge_sources"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       save_chat_turn: {
         Args: {
           p_bot_reply: string
-          p_conversation_id: string | null
+          p_conversation_id: string
           p_project_id: string
           p_visitor_id: string
           p_visitor_message: string
