@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { SignOutButton, UserButton } from "@clerk/nextjs";
 import styles from "./dashboard.module.css";
 
 const navigation = [
@@ -31,7 +32,14 @@ export function DashboardFrame({ children, activeItem }: { children: ReactNode; 
         </nav>
         <div className={styles.sidebarBottom}>
           <div className={styles.planCard}><span className={styles.planDot} /><div><strong>Free plan</strong><small>1 project · 100 messages/mo</small></div></div>
-          <div className={styles.accountPlaceholder}><span className={styles.accountAvatar}>A</span><span>Account controls<br /><small>Coming soon</small></span><span className={styles.more}>···</span></div>
+          <div className={styles.accountPlaceholder}>
+            <UserButton />
+            <SignOutButton redirectUrl="/sign-in">
+              <button type="button" style={{ border: 0, background: "transparent", color: "inherit", cursor: "pointer", font: "inherit" }}>
+                Sign out
+              </button>
+            </SignOutButton>
+          </div>
         </div>
       </aside>
       <main className={styles.main}>
