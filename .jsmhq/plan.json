@@ -17,6 +17,12 @@
       "title": "Phase 1 — Foundation",
       "status": "active",
       "order": 2
+    },
+    {
+      "id": "P2P",
+      "title": "Phase 2 — Projects + widget",
+      "status": "active",
+      "order": 3
     }
   ],
   "tasks": [
@@ -106,20 +112,20 @@
       "id": "P1F-T04",
       "boardId": "P1F",
       "title": "Database functions and plan limits",
-      "ownerId": null,
-      "status": "todo",
+      "ownerId": "tho-ca",
+      "status": "done",
       "needs": [
         "P1F-T03",
         "P1F-T08"
       ],
-      "prNumber": null,
+      "prNumber": 8,
       "description": "Lane A, owned by Tho ca. Read docs/project.md §5, §7, §9 and CLAUDE.md. After P1F-T03 lands and its migration is on dev, add a new additive migration with create_project, reserve_knowledge_source, consume_message, save_chat_turn, match_chunks, and owner_activity. Enforce §5 plan limits from passed PLAN_LIMITS values inside the counting functions under row locks or atomic statements. Restrict EXECUTE by role and use empty search_path as §9 requires. Add pglite tests for Free/Pro limits, concurrency-safe counts, project-scoped retrieval, and grants; update packages/db/types.ts for RPC signatures. Never edit the earlier migration or apply this one to shared dev before merge. After merge, apply through the Supabase MCP and confirm regenerated types show no diff.",
       "files": [
         "supabase/migrations",
         "packages/db"
       ],
       "doneWhen": "All six §7 functions exist with correct role grants; pglite tests cover limits and tenant scope; pnpm checks pass; one PR is opened; after merge migration is recorded on dev and regenerated types show no diff.",
-      "note": null
+      "note": "PR #8 opened; all pnpm checks pass. Checking Vercel preview next. Post-merge dev migration and type regeneration remain."
     },
     {
       "id": "P1F-T05",
@@ -161,12 +167,12 @@
       "boardId": "P1F",
       "title": "Clerk sign-in and account bootstrap",
       "ownerId": "tho-phu",
-      "status": "in-progress",
+      "status": "done",
       "needs": [
         "P1F-T05",
         "P1F-T06"
       ],
-      "prNumber": null,
+      "prNumber": 9,
       "description": "Lane B, owned by Tho phu. Read docs/project.md §6.2, §7, §9, §13 and CLAUDE.md. After P1F-T05 and P1F-T06 land, add Clerk provider, Clerk default sign-in/sign-up pages, and current Next.js middleware/proxy protection for /dashboard/* and owner API routes. Support email/password and Google as configured by the product owner. On first authenticated dashboard visit, idempotently create an accounts row for the Clerk user ID with plan free through the server-only service client; never overwrite an existing paid plan. Add sign-out and route tests. Use the installed clerk, clerk-nextjs-patterns, supabase, and Next skills with current docs. For local tests before keys are available, mock Clerk and Supabase at the boundary; do not hard-code keys.",
       "files": [
         "apps/web/app/layout.tsx",
@@ -179,7 +185,7 @@
         "apps/web/proxy.ts"
       ],
       "doneWhen": "With test keys configured, new email and Google sign-ups land on the dashboard with one free accounts row; repeat sign-in does not reset plan; sign-out redirects to sign-in; owner routes reject signed-out requests; tests and pnpm checks pass; preview loads; one PR is opened.",
-      "note": null
+      "note": "PR #9 is open. Typecheck, lint, tests, and build pass. Vercel preview loads (home/sign-in/sign-up 200; signed-out dashboard rejected). No code blocker; a live email/Google sign-up was not exercised because that requires a test user."
     },
     {
       "id": "P1F-T08",
@@ -197,6 +203,176 @@
       ],
       "doneWhen": "MCP-generated types match packages/db/types.ts with no diff on a second generation; pnpm typecheck, lint, test, and build pass; one PR is opened and its Vercel preview is checked.",
       "note": "PR #7 open. MCP-generated types match on repeat; typecheck, lint, test, build pass. Vercel skipped deployment as Not affected, so no preview URL was available; noted in PR."
+    },
+    {
+      "id": "P2P-T01",
+      "boardId": "P2P",
+      "title": "Projects list and create API",
+      "ownerId": "tho-ca",
+      "status": "done",
+      "needs": [
+        "P1F-T04",
+        "P1F-T07"
+      ],
+      "prNumber": 10,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §5, §6.3, §7, §8, §9 and CLAUDE.md. Implement GET and POST /api/projects using the shared zod schemas and response types. Require a Clerk owner session; owner reads use createOwnerClient so RLS scopes projects. For create, read the account plan on the server, generate a random pk_ public key, and call create_project with PLAN_LIMITS.projects after checking ownership and account bootstrap. Map SQL limit errors to structured API errors; do not trust a client plan. Add route tests for empty/owned lists, Free and Pro creation limits, missing auth and errors. The merged P1F-T04 RPC contract is in PR #8; if the dev migration is still being applied, mock the RPC in tests and verify live behavior once available.",
+      "files": [
+        "apps/web/app/api/projects/route.ts",
+        "apps/web/app/api/projects/route.test.ts",
+        "apps/web/lib/projects"
+      ],
+      "doneWhen": "GET lists only the signed-in owner's projects; POST creates a project and default config; second Free project is refused and Pro allows five; unauthenticated requests fail; tests and all pnpm checks pass; preview loads; one PR is opened.",
+      "note": "PR #10 checks and preview homepage pass. Live unauthenticated /api/projects is intercepted by existing Clerk proxy as HTML 404 before route can return structured 401. Fix requires proxy/auth file outside allowed list; asked lead for scope decision."
+    },
+    {
+      "id": "P2P-T02",
+      "boardId": "P2P",
+      "title": "Widget loader",
+      "ownerId": "tho-phu",
+      "status": "done",
+      "needs": [
+        "P1F-T01"
+      ],
+      "prNumber": 12,
+      "description": "Lane B, owned by Tho phu. Read docs/project.md §6.5, §7, §8, §9, §11 and CLAUDE.md. Build the under-5-kb vanilla TypeScript loader in apps/widget. Read data-key from its own script tag, fetch GET /api/widget/config using the script origin, render a button in a shadow root, and open /embed?key=... in an iframe with the configured animation. Handle close, resize and unread postMessage events with strict event.origin checks and explicit target origins. Bad keys render nothing; keep secrets and host-page CSS out of the bundle. Arrange the build so /widget.js is served by apps/web and the public Install snippet can load it. The config route is P2P-T04 and may not be merged: use a mocked config response in loader tests until then. The /embed panel is P2P-T07: use an iframe fixture until it lands. Use the installed Next/React skills if touching web build configuration.",
+      "files": [
+        "apps/widget",
+        "apps/web/public/widget.js",
+        "apps/web/next.config.ts",
+        "package.json",
+        "pnpm-lock.yaml"
+      ],
+      "doneWhen": "Loader bundle is under 5 kb, renders only for a valid mocked key, opens the iframe, respects host CSS isolation, and rejects wrong-origin postMessages; tests and all pnpm checks pass; preview serves /widget.js; one PR is opened.",
+      "note": "PR #12 preview check is complete: /widget.js returns 200 from the Ready Vercel preview at 4,982 bytes. All pnpm checks pass. The Next dev-loop browser check remains blocked on Chromium package access requested via HQ."
+    },
+    {
+      "id": "P2P-T03",
+      "boardId": "P2P",
+      "title": "Rename and delete project API",
+      "ownerId": "tho-ca",
+      "status": "done",
+      "needs": [
+        "P2P-T01"
+      ],
+      "prNumber": 13,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §6.3, §7, §8, §9 and CLAUDE.md. Implement PATCH and DELETE /api/projects/:id with shared schemas and error shape. Require a Clerk session. Rename through the owner client so RLS decides ownership and only name can be updated. Delete through the owner client, relying on schema cascades, and return NOT_FOUND for another owner's or missing project. Add route tests for authorized rename/delete, cross-owner isolation, missing project and signed-out requests. Use the merged P2P-T01 project mapping helper; if its branch is still in review, mock its response in tests and wait to merge this PR until the helper is on main.",
+      "files": [
+        "apps/web/app/api/projects/[id]"
+      ],
+      "doneWhen": "Owner can rename and delete a project; another owner's ID cannot be read or changed; signed-out requests fail; tests and all pnpm checks pass; preview loads; one PR is opened.",
+      "note": null
+    },
+    {
+      "id": "P2P-T04",
+      "boardId": "P2P",
+      "title": "Public widget config API",
+      "ownerId": null,
+      "status": "todo",
+      "needs": [
+        "P1F-T03"
+      ],
+      "prNumber": null,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §5, §6.5, §7, §8, §9 and CLAUDE.md. Implement GET /api/widget/config for a pk_ public key, with shared input and response types. Resolve only the project and widget config needed by a visitor using the server-only service client; unknown key returns a structured NOT_FOUND. Read the owner's plan from the database on each request and apply DEFAULT_WIDGET_CONFIG plus the badge for Free, regardless of stored customization. Return CORS headers for any origin and handle OPTIONS. Never expose owner data or Supabase credentials. Add route tests for Free, Pro, missing key, invalid key and cross-origin requests. Arcjet key arrives in Phase 3; keep this route ready for that later rate-limit integration without inventing a paid service.",
+      "files": [
+        "apps/web/app/api/widget/config",
+        "apps/web/lib/widget/config"
+      ],
+      "doneWhen": "Valid public key returns only plan-applied config; bad key fails; Free cannot expose paid customization; CORS works across origins; tests and all pnpm checks pass; preview loads; one PR is opened.",
+      "note": null
+    },
+    {
+      "id": "P2P-T05",
+      "boardId": "P2P",
+      "title": "Projects dashboard",
+      "ownerId": null,
+      "status": "todo",
+      "needs": [
+        "P2P-T01",
+        "P2P-T03"
+      ],
+      "prNumber": null,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §5, §6.3, §6.9, §13 and CLAUDE.md. Replace the empty Projects dashboard with an owner project list and create, rename, delete controls using the shared Project API types. Show the Free/Pro project count, the server's limit error, and loading, empty, and error states; confirm before delete. Keep the existing light monochrome glass style and support 375 px width. Add a link from each project to its Install page, which P2P-T06 will build; until it lands, the link can point to that planned route. Use the installed Next/React skills and current docs. Avoid putting a client-selected plan in any mutation request.",
+      "files": [
+        "apps/web/app/dashboard/page.tsx",
+        "apps/web/components/dashboard/dashboard.module.css",
+        "apps/web/components/projects"
+      ],
+      "doneWhen": "Signed-in owner can list, create, rename, and delete projects in the dashboard; Free limit is explained; empty/loading/error states and 375 px layout work; tests and all pnpm checks pass; preview loads; one PR is opened.",
+      "note": null
+    },
+    {
+      "id": "P2P-T06",
+      "boardId": "P2P",
+      "title": "Install page",
+      "ownerId": null,
+      "status": "todo",
+      "needs": [
+        "P2P-T05",
+        "P2P-T02"
+      ],
+      "prNumber": null,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §6.3, §6.9, §8, §9, §11, §13 and CLAUDE.md. Build /dashboard/projects/:id/install with the project public key and one copyable script tag for the deployed widget.js URL, plus short paste steps. Fetch the project through the owner client so another owner's project returns not found. Use NEXT_PUBLIC_APP_URL or the request origin for the snippet's absolute URL, with no secret values in it. Provide loading, empty, and error states, responsive down to 375 px. P2P-T02 supplies widget.js; if that PR is in review, use a fixture script URL in UI tests until merged. Test the copied snippet on a plain HTML page on a separate origin after loader, config and panel land.",
+      "files": [
+        "apps/web/app/dashboard/projects/[id]/install",
+        "apps/web/components/install"
+      ],
+      "doneWhen": "Owner sees a correct snippet and can copy it; another owner's project is hidden; a plain HTML page on another origin loads the widget after integration; tests and all pnpm checks pass; preview loads; one PR is opened.",
+      "note": null
+    },
+    {
+      "id": "P2P-T07",
+      "boardId": "P2P",
+      "title": "Embed panel with mock replies",
+      "ownerId": null,
+      "status": "todo",
+      "needs": [
+        "P2P-T02"
+      ],
+      "prNumber": null,
+      "description": "Lane B, owned by Tho phu. Read docs/project.md §5, §6.5, §8, §9, §13 and CLAUDE.md. Build /embed?key=... as the iframe panel with header, text-only message list, input, typing state, and Free 'Powered by' badge. Persist a random visitor ID in iframe localStorage across visits. Fetch plan-applied config from P2P-T04; if that route is not yet merged, mock its response in tests and use a fixture for preview checks. On send, show a short mock reply without calling the chat API (Phase 3 owns real chat), and show friendly placeholders for rate-limit/quota errors. Handle close, resize and unread postMessage with strict event.origin validation and explicit target origins; derive the trusted parent origin safely from the parent handshake, not arbitrary visitor input. Add tests for visitor ID reuse, text-only rendering, bad key, and origin rejection. Use installed Next/React skills and current docs.",
+      "files": [
+        "apps/web/app/embed",
+        "apps/web/components/embed"
+      ],
+      "doneWhen": "Iframe panel opens from the loader, retains visitor ID, displays a mock reply and typing state, shows the correct badge, and rejects wrong-origin messages; 375 px layout, tests and all pnpm checks pass; preview loads; one PR is opened.",
+      "note": null
+    },
+    {
+      "id": "P1F-T09",
+      "boardId": "P1F",
+      "title": "Correct generated RPC types",
+      "ownerId": "tho-ca",
+      "status": "done",
+      "needs": [
+        "P1F-T04"
+      ],
+      "prNumber": 11,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §7, §9 and CLAUDE.md. PR #8's migration is merged and applied to the Supabase dev project as version 20261123120000, but packages/db/types.ts does not match the dev type generator. Regenerate the database types through the scoped Supabase MCP and commit only the correction for RPC signatures, including expanded composite returns, SetofOptions, owner_activity Args: never, and nullable SQL parameters. Keep the SQL migration unchanged; do not touch production. Check the regenerated output against the merged schema, run all pnpm checks, and open one focused PR. P2P-T01 may use the current types in mocks while this is unmerged; coordinate its final typecheck and merge with this PR.",
+      "files": [
+        "packages/db/types.ts"
+      ],
+      "doneWhen": "MCP regeneration against dev yields no diff after the correction; RPC signatures match the applied migration; all pnpm checks pass; one focused PR and preview check are complete.",
+      "note": "PR #11 corrects only packages/db/types.ts; MCP output matches byte for byte and all pnpm checks pass. Checking Vercel preview next."
+    },
+    {
+      "id": "P2P-T08",
+      "boardId": "P2P",
+      "title": "Structured owner API auth errors",
+      "ownerId": "tho-phu",
+      "status": "in-progress",
+      "needs": [
+        "P1F-T07"
+      ],
+      "prNumber": null,
+      "description": "Lane B, owned by Tho phu. Read docs/project.md §6.2, §8, §9 and CLAUDE.md. PR #10's live preview showed signed-out GET /api/projects intercepted by Clerk proxy as a 404 protect-rewrite, so the API handler cannot return the required structured 401. Update the Next.js 16 proxy/auth route matchers to keep dashboard browser redirects while returning { error: { code: 'UNAUTHORIZED', message } } with HTTP 401 for signed-out owner /api/* requests. Keep public widget routes, Clerk webhook and posthog-config public. Check current Clerk/Next docs using installed skills before editing. Add tests for signed-out owner API JSON, dashboard redirect, public paths and authenticated pass-through. Use PR #10's /api/projects preview behavior as a regression case; until #10 merges, mock an owner route in proxy tests.",
+      "files": [
+        "apps/web/proxy.ts",
+        "apps/web/lib/auth/routes.ts",
+        "apps/web/lib/auth/routes.test.ts",
+        "apps/web/lib/auth/proxy.test.ts"
+      ],
+      "doneWhen": "Signed-out owner API request returns structured 401 JSON; dashboard stays protected; public routes stay reachable; tests and all pnpm checks pass; preview verifies /api/projects after PR #10 merges; one PR is opened.",
+      "note": null
     }
   ]
 }

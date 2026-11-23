@@ -113,7 +113,9 @@
           "docs.arcjet.com",
           "decide.arcjet.com",
           "askwell-eight.vercel.app",
-          "*.vercel.app"
+          "*.vercel.app",
+          "dhi.io",
+          "googlechromelabs.github.io:443"
         ],
         "deny": []
       },
