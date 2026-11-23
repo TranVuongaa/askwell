@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { ensureCurrentAccount } from "../../lib/auth/account";
 import { DashboardFrame, EmptyState } from "../../components/dashboard/dashboard-ui";
 import styles from "../../components/dashboard/dashboard.module.css";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  await ensureCurrentAccount();
+
   return (
     <DashboardFrame activeItem="Projects">
       <div className={styles["dashboard-breadcrumb"]}>Workspace <span>/</span> Projects</div>
