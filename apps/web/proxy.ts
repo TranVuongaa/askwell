@@ -2,7 +2,7 @@ import { clerkMiddleware } from '@clerk/nextjs/server';
 import { protectOwnerRequest } from './lib/auth/routes';
 
 export default clerkMiddleware(async (auth, request) => {
-  await protectOwnerRequest(request.nextUrl.pathname, auth);
+  return protectOwnerRequest(request.nextUrl.pathname, auth);
 });
 
 export const config = {
