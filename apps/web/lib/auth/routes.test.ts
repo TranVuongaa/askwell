@@ -15,27 +15,54 @@ describe('protectOwnerRequest', () => {
   it.each(['/dashboard', '/dashboard/projects', '/api/projects', '/api/knowledge/123', '/api/conversations/456'])(
     'protects %s', async (pathname) => {
       const protect = vi.fn().mockResolvedValue(undefined);
+      const auth = Object.assign(vi.fn().mockResolvedValue({ userId: 'user_123' }), { protect });
 
-      await protectOwnerRequest(pathname, { protect });
+      await protectOwnerRequest(pathname, auth);
 
-      expect(protect).toHaveBeenCalledOnce();
+      if (pathname.startsWith('/dashboard')) expect(protect).toHaveBeenCalledOnce();
+      else expect(auth).toHaveBeenCalledOnce();
     },
   );
 
   it.each(['/sign-in', '/', '/api/widget/chat', '/api/clerk/webhook'])(
     'leaves %s public', async (pathname) => {
       const protect = vi.fn().mockResolvedValue(undefined);
+      const auth = Object.assign(vi.fn().mockResolvedValue({ userId: null }), { protect });
 
-      await protectOwnerRequest(pathname, { protect });
+      await protectOwnerRequest(pathname, auth);
 
       expect(protect).not.toHaveBeenCalled();
+      expect(auth).not.toHaveBeenCalled();
     },
   );
 
   it('propagates Clerk rejection for a signed-out request', async () => {
     const reject = new Error('not authenticated');
     const protect = vi.fn().mockRejectedValue(reject);
+    const auth = Object.assign(vi.fn().mockResolvedValue({ userId: null }), { protect });
 
-    await expect(protectOwnerRequest('/dashboard', { protect })).rejects.toBe(reject);
+    await expect(protectOwnerRequest('/dashboard', auth)).rejects.toBe(reject);
+  });
+
+  it('returns structured JSON 401 for a signed-out owner API request', async () => {
+    const protect = vi.fn();
+    const auth = Object.assign(vi.fn().mockResolvedValue({ userId: null }), { protect });
+
+    const response = await protectOwnerRequest('/api/projects', auth);
+
+    expect(response?.status).toBe(401);
+    expect(response?.headers.get('content-type')).toContain('application/json');
+    await expect(response?.json()).resolves.toEqual({
+      error: { code: 'UNAUTHORIZED', message: 'Authentication required' },
+    });
+    expect(protect).not.toHaveBeenCalled();
+  });
+
+  it('passes authenticated owner API requests through', async () => {
+    const protect = vi.fn();
+    const auth = Object.assign(vi.fn().mockResolvedValue({ userId: 'user_123' }), { protect });
+
+    await expect(protectOwnerRequest('/api/projects', auth)).resolves.toBeUndefined();
+    expect(auth).toHaveBeenCalledOnce();
   });
 });
