@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { PLAN_LIMITS, type GetProjectsResponse, type Project } from '@askwell/shared';
-import { EmptyState, ErrorState, LoadingState } from '../dashboard/dashboard-ui';
+import { DashboardFrame, EmptyState, ErrorState, LoadingState } from '../dashboard/dashboard-ui';
 import styles from '../dashboard/dashboard.module.css';
 import { createProject, deleteProject, listProjects, ProjectApiError, renameProject } from './project-api';
 
@@ -85,7 +85,7 @@ export function ProjectsDashboard() {
   const limit = data ? PLAN_LIMITS[data.plan].projects : null;
 
   return (
-    <>
+    <DashboardFrame activeItem="Projects" plan={loadError ? null : data?.plan ?? null} planLoading={loading}>
       <div className={styles['dashboard-breadcrumb']}>Workspace <span>/</span> Projects</div>
       <div className={styles['dashboard-heading']}>
         <div>
@@ -140,6 +140,6 @@ export function ProjectsDashboard() {
           </li>)}</ul>}
       </section>
       <div className={styles['dashboard-footnote']}>A calm place to build better customer support.</div>
-    </>
+    </DashboardFrame>
   );
 }
