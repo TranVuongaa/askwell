@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { SignOutButton, UserButton } from "@clerk/nextjs";
+import { APP_NAME, PLAN_LIMITS, type Plan } from "@askwell/shared";
 import styles from "./dashboard.module.css";
 
 const navigation = [
@@ -12,16 +13,24 @@ const navigation = [
   { label: "Billing", href: "/dashboard/billing", icon: "◇" },
 ];
 
-export function DashboardFrame({ children, activeItem }: { children: ReactNode; activeItem: string }) {
+export function DashboardFrame({ children, activeItem, plan = null, planLoading = false }: {
+  children: ReactNode; activeItem: string; plan?: Plan | null; planLoading?: boolean;
+}) {
+  const planLabel = planLoading ? "Loading plan…" : plan ? `${plan === "free" ? "Free" : "Pro"} plan` : "Plan unavailable";
+  const planLimits = !planLoading && plan ? PLAN_LIMITS[plan] : null;
+  const limitLabel = planLimits
+    ? `${planLimits.projects} ${planLimits.projects === 1 ? "project" : "projects"} · ${planLimits.messagesPerMonthPerProject.toLocaleString()} messages/mo`
+    : planLoading ? "Checking your limits" : "Project limits unavailable";
+
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar} aria-label="Workspace navigation">
-        <Link className={styles.brand} href="/dashboard" aria-label="Askwell dashboard">
-          <span className={styles.brandMark}>a</span><span>askwell</span>
+        <Link className={styles.brand} href="/dashboard" aria-label={`${APP_NAME} dashboard`}>
+          <span className={styles.brandMark}>a</span><span>{APP_NAME}</span>
         </Link>
         <div className={styles.workspaceLabel}>WORKSPACE</div>
-        <button className={styles.workspacePicker} type="button" disabled aria-label="Current workspace: My workspace">
-          <span className={styles.workspaceIcon}>M</span><span className={styles.workspaceName}>My workspace<small>Free plan</small></span><span className={styles.chevron}>⌄</span>
+        <button className={styles.workspacePicker} type="button" disabled aria-label={`Current workspace: My workspace, ${planLabel}`}>
+          <span className={styles.workspaceIcon}>M</span><span className={styles.workspaceName}>My workspace<small>{planLabel}</small></span><span className={styles.chevron}>⌄</span>
         </button>
         <nav className={styles.nav} id="navigation" aria-label="Dashboard">
           {navigation.map((item) => (
@@ -31,7 +40,7 @@ export function DashboardFrame({ children, activeItem }: { children: ReactNode; 
           ))}
         </nav>
         <div className={styles.sidebarBottom}>
-          <div className={styles.planCard}><span className={styles.planDot} /><div><strong>Free plan</strong><small>1 project · 100 messages/mo</small></div></div>
+          <div className={styles.planCard}><span className={styles.planDot} /><div><strong>{planLabel}</strong><small>{limitLabel}</small></div></div>
           <div className={styles.accountPlaceholder}>
             <UserButton />
             <SignOutButton redirectUrl="/sign-in">
@@ -43,7 +52,7 @@ export function DashboardFrame({ children, activeItem }: { children: ReactNode; 
         </div>
       </aside>
       <main className={styles.main}>
-        <header className={styles.topbar}><div className={styles.mobileBrand}><span className={styles.brandMark}>a</span> askwell</div><span className={styles.topbarHint}>Workspace overview</span><span className={styles.topbarStatus}><i /> All systems normal</span></header>
+        <header className={styles.topbar}><div className={styles.mobileBrand}><span className={styles.brandMark}>a</span> {APP_NAME}</div><span className={styles.topbarHint}>Workspace overview</span><span className={styles.topbarStatus}><i /> All systems normal</span></header>
         <div className={styles.content}>{children}</div>
       </main>
     </div>
