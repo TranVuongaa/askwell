@@ -266,76 +266,81 @@
       "id": "P2P-T04",
       "boardId": "P2P",
       "title": "Public widget config API",
-      "ownerId": null,
-      "status": "todo",
+      "ownerId": "tho-ca",
+      "status": "done",
       "needs": [
         "P1F-T03"
       ],
-      "prNumber": null,
+      "prNumber": 15,
       "description": "Lane A, owned by Tho ca. Read docs/project.md §5, §6.5, §7, §8, §9 and CLAUDE.md. Implement GET /api/widget/config for a pk_ public key, with shared input and response types. Resolve only the project and widget config needed by a visitor using the server-only service client; unknown key returns a structured NOT_FOUND. Read the owner's plan from the database on each request and apply DEFAULT_WIDGET_CONFIG plus the badge for Free, regardless of stored customization. Return CORS headers for any origin and handle OPTIONS. Never expose owner data or Supabase credentials. Add route tests for Free, Pro, missing key, invalid key and cross-origin requests. Arcjet key arrives in Phase 3; keep this route ready for that later rate-limit integration without inventing a paid service.",
       "files": [
         "apps/web/app/api/widget/config",
         "apps/web/lib/widget/config"
       ],
       "doneWhen": "Valid public key returns only plan-applied config; bad key fails; Free cannot expose paid customization; CORS works across origins; tests and all pnpm checks pass; preview loads; one PR is opened.",
-      "note": null
+      "note": "PR open; all local checks pass. Vercel preview ready but valid-format unknown key returns 500 vs local 404. Asked user to verify Preview Supabase env variables; PR records the preview URL and issue."
     },
     {
       "id": "P2P-T05",
       "boardId": "P2P",
       "title": "Projects dashboard",
-      "ownerId": null,
-      "status": "todo",
+      "ownerId": "tho-ca",
+      "status": "done",
       "needs": [
         "P2P-T01",
         "P2P-T03"
       ],
-      "prNumber": null,
-      "description": "Lane A, owned by Tho ca. Read docs/project.md §5, §6.3, §6.9, §13 and CLAUDE.md. Replace the empty Projects dashboard with an owner project list and create, rename, delete controls using the shared Project API types. Show the Free/Pro project count, the server's limit error, and loading, empty, and error states; confirm before delete. Keep the existing light monochrome glass style and support 375 px width. Add a link from each project to its Install page, which P2P-T06 will build; until it lands, the link can point to that planned route. Use the installed Next/React skills and current docs. Avoid putting a client-selected plan in any mutation request.",
+      "prNumber": 17,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §5, §6.3, §6.9, §13 and CLAUDE.md. Replace the empty Projects dashboard with an owner project list and create, rename, delete controls using the shared Project API types. Show the Free/Pro project count and current plan from the server response in both the Projects view and the shared dashboard sidebar; do not hardcode Free for Pro owners. Show the server's limit error and loading, empty, and error states; confirm before delete. Keep the existing light monochrome glass style and support 375 px width. Add a link from each project to its Install page, which P2P-T06 will build; until it lands, the link can point to that planned route. Use the installed Next/React skills and current docs. Avoid putting a client-selected plan in any mutation request.",
       "files": [
         "apps/web/app/dashboard/page.tsx",
         "apps/web/components/dashboard/dashboard.module.css",
+        "apps/web/components/dashboard/dashboard-ui.tsx",
         "apps/web/components/projects"
       ],
-      "doneWhen": "Signed-in owner can list, create, rename, and delete projects in the dashboard; Free limit is explained; empty/loading/error states and 375 px layout work; tests and all pnpm checks pass; preview loads; one PR is opened.",
+      "doneWhen": "Signed-in owner can list, create, rename, and delete projects in the dashboard; the current Free/Pro plan and count are correct in the Projects view and shared sidebar; Free limit is explained; empty/loading/error states and 375 px layout work; tests and all pnpm checks pass; preview loads; one PR is opened.",
       "note": null
     },
     {
       "id": "P2P-T06",
       "boardId": "P2P",
       "title": "Install page",
-      "ownerId": null,
-      "status": "todo",
+      "ownerId": "tho-ca",
+      "status": "done",
       "needs": [
         "P2P-T05",
-        "P2P-T02"
+        "P2P-T09",
+        "P2P-T02",
+        "P2P-T04",
+        "P2P-T07"
       ],
-      "prNumber": null,
-      "description": "Lane A, owned by Tho ca. Read docs/project.md §6.3, §6.9, §8, §9, §11, §13 and CLAUDE.md. Build /dashboard/projects/:id/install with the project public key and one copyable script tag for the deployed widget.js URL, plus short paste steps. Fetch the project through the owner client so another owner's project returns not found. Use NEXT_PUBLIC_APP_URL or the request origin for the snippet's absolute URL, with no secret values in it. Provide loading, empty, and error states, responsive down to 375 px. P2P-T02 supplies widget.js; if that PR is in review, use a fixture script URL in UI tests until merged. Test the copied snippet on a plain HTML page on a separate origin after loader, config and panel land.",
+      "prNumber": 19,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §6.3, §6.9, §8, §9, §11, §13 and CLAUDE.md. Build /dashboard/projects/:id/install with the project public key and one copyable script tag for the deployed widget.js URL, plus short paste steps. Fetch the project through the owner client so another owner's project returns not found. Also make the existing dashboard Install navigation target /dashboard/install useful: show the signed-in owner's projects as choices linking to their project install pages, and an empty state linking to project creation. Use NEXT_PUBLIC_APP_URL or the request origin for the snippet's absolute URL, with no secret values in it. Provide loading, empty, and error states, responsive down to 375 px. P2P-T02 supplies widget.js and P2P-T07 supplies /embed. Verify the copied snippet on a plain HTML page on a separate origin after the loader, config, and panel are available; record the preview URL and any Preview Supabase configuration blocker. Use the installed Next/React and Supabase skills and current docs.",
       "files": [
+        "apps/web/app/dashboard/install",
         "apps/web/app/dashboard/projects/[id]/install",
         "apps/web/components/install"
       ],
-      "doneWhen": "Owner sees a correct snippet and can copy it; another owner's project is hidden; a plain HTML page on another origin loads the widget after integration; tests and all pnpm checks pass; preview loads; one PR is opened.",
-      "note": null
+      "doneWhen": "The dashboard Install navigation opens a useful project chooser; the owner can open a project install page, see its public-key snippet and copy it; another owner's project is hidden; the copied snippet loads a button and mock chat on a plain HTML page on another origin using the latest preview; loading/empty/error states and 375 px layout work; tests and all pnpm checks pass; one PR is opened.",
+      "note": "PR #19 code is ready and all checks pass, but the Vercel Preview /api/widget/config returns HTTP 500 for a dev project that works locally. This blocks the required live cross-origin preview widget test. Requested a Vercel Preview Supabase env check and redeploy; signed-in visual check is also with t"
     },
     {
       "id": "P2P-T07",
       "boardId": "P2P",
       "title": "Embed panel with mock replies",
-      "ownerId": null,
-      "status": "todo",
+      "ownerId": "tho-phu",
+      "status": "done",
       "needs": [
         "P2P-T02"
       ],
-      "prNumber": null,
+      "prNumber": 16,
       "description": "Lane B, owned by Tho phu. Read docs/project.md §5, §6.5, §8, §9, §13 and CLAUDE.md. Build /embed?key=... as the iframe panel with header, text-only message list, input, typing state, and Free 'Powered by' badge. Persist a random visitor ID in iframe localStorage across visits. Fetch plan-applied config from P2P-T04; if that route is not yet merged, mock its response in tests and use a fixture for preview checks. On send, show a short mock reply without calling the chat API (Phase 3 owns real chat), and show friendly placeholders for rate-limit/quota errors. Handle close, resize and unread postMessage with strict event.origin validation and explicit target origins; derive the trusted parent origin safely from the parent handshake, not arbitrary visitor input. Add tests for visitor ID reuse, text-only rendering, bad key, and origin rejection. Use installed Next/React skills and current docs.",
       "files": [
         "apps/web/app/embed",
         "apps/web/components/embed"
       ],
       "doneWhen": "Iframe panel opens from the loader, retains visitor ID, displays a mock reply and typing state, shows the correct badge, and rejects wrong-origin messages; 375 px layout, tests and all pnpm checks pass; preview loads; one PR is opened.",
-      "note": null
+      "note": "PR #16 is open. All pnpm checks pass; local 375 px browser validation with a fixture config passed. Waiting for Vercel preview to become Ready; the repo currently has no framing CSP, and I asked the lead about the Phase 3 scope boundary."
     },
     {
       "id": "P1F-T09",
@@ -359,11 +364,11 @@
       "boardId": "P2P",
       "title": "Structured owner API auth errors",
       "ownerId": "tho-phu",
-      "status": "in-progress",
+      "status": "done",
       "needs": [
         "P1F-T07"
       ],
-      "prNumber": null,
+      "prNumber": 14,
       "description": "Lane B, owned by Tho phu. Read docs/project.md §6.2, §8, §9 and CLAUDE.md. PR #10's live preview showed signed-out GET /api/projects intercepted by Clerk proxy as a 404 protect-rewrite, so the API handler cannot return the required structured 401. Update the Next.js 16 proxy/auth route matchers to keep dashboard browser redirects while returning { error: { code: 'UNAUTHORIZED', message } } with HTTP 401 for signed-out owner /api/* requests. Keep public widget routes, Clerk webhook and posthog-config public. Check current Clerk/Next docs using installed skills before editing. Add tests for signed-out owner API JSON, dashboard redirect, public paths and authenticated pass-through. Use PR #10's /api/projects preview behavior as a regression case; until #10 merges, mock an owner route in proxy tests.",
       "files": [
         "apps/web/proxy.ts",
@@ -372,7 +377,46 @@
         "apps/web/lib/auth/proxy.test.ts"
       ],
       "doneWhen": "Signed-out owner API request returns structured 401 JSON; dashboard stays protected; public routes stay reachable; tests and all pnpm checks pass; preview verifies /api/projects after PR #10 merges; one PR is opened.",
-      "note": null
+      "note": "PR #14 is open and local checks pass. Vercel deployment is Ready, but preview verification is blocked by Vercel Authentication; direct requests redirect to SSO and no authenticated Vercel CLI/MCP is available. Asked the user via HQ Action item to enable preview access."
+    },
+    {
+      "id": "P2P-T09",
+      "boardId": "P2P",
+      "title": "Correct dashboard sidebar plan",
+      "ownerId": "tho-ca",
+      "status": "done",
+      "needs": [
+        "P2P-T05"
+      ],
+      "prNumber": 18,
+      "description": "Lane A, owned by Tho ca. Read docs/project.md §5, §6.3, §7, §9, §13 and CLAUDE.md. PR #17 merged without the P2P-T05 sidebar correction: dashboard-ui.tsx still hardcodes Free plan and Free limits for Pro owners. On a new branch from main, show the current plan and matching limits in the shared dashboard sidebar using the signed-in owner's server-reported plan from GET /api/projects. Reuse the Projects view's existing response where practical; do not send a client-selected plan to mutations. While loading or on API failure, show a neutral label instead of claiming Free. Replace the hardcoded product name in this sidebar file with APP_NAME from packages/shared, as §5 requires; keep packages/shared unchanged. Preserve the responsive sidebar and current project controls. This is a focused correction PR; P2P-T06 follows it.",
+      "files": [
+        "apps/web/app/dashboard/page.tsx",
+        "apps/web/components/dashboard/dashboard-ui.tsx",
+        "apps/web/components/projects/projects-dashboard.tsx",
+        "apps/web/components/projects/projects-dashboard.test.tsx"
+      ],
+      "doneWhen": "On the Projects dashboard, Free and Pro owners see their correct plan and limits in the shared sidebar; loading/error states do not display a false Free label; dashboard branding uses APP_NAME; current project controls still work; tests and all pnpm checks pass; preview loads; one PR is opened.",
+      "note": "PR #18 ready. pnpm typecheck, lint, test, build pass; Vercel deployment passed, preview root 200, unauthenticated /api/projects 401. Signed-in dashboard plan rendering requires an owner Clerk session; component tests cover Free, Pro, loading, and neutral failure states."
+    },
+    {
+      "id": "P2P-T10",
+      "boardId": "P2P",
+      "title": "Diagnose preview widget config failure",
+      "ownerId": "tho-ca",
+      "status": "done",
+      "needs": [
+        "P2P-T04",
+        "P2P-T06"
+      ],
+      "prNumber": 20,
+      "description": "The merged public config route returns HTTP 500 on the Vercel Preview, while the same dev project works locally. Read docs/project.md §6.5, §8 and §9. Add server-side diagnostic logging at the route's failure boundary with a fixed stage and safe error category/code; for missing required environment variables, log only the allowlisted variable name. Never log the public key, URL values, secret values, owner data, or raw error object. Preserve the existing structured API response and CORS behavior. Add a focused test that forces service-client and query failures, checks the diagnostic output and redaction, and confirms the public response is unchanged. After merging, use the new preview log to identify the Vercel setting problem; no mocks are needed beyond the existing route tests.",
+      "files": [
+        "apps/web/app/api/widget/config/route.ts",
+        "apps/web/app/api/widget/config/route.test.ts"
+      ],
+      "doneWhen": "pnpm typecheck, pnpm lint, pnpm test, and pnpm build pass; valid-key simulated failure returns the same 500 body and CORS headers; server log identifies the failure stage or missing variable name without values or request key; one focused PR opens and its Vercel preview is Ready.",
+      "note": "PR #20 ready with preview URL and done-when checklist. Vercel Ready; root 200, invalid-key config 400, valid-key config still 500. New server-only diagnostic will identify stage/allowlisted missing env name in Vercel Runtime Logs; no Vercel API token in sandbox to read them directly."
     }
   ]
 }

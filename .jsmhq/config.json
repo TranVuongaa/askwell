@@ -43,7 +43,9 @@
         "deny": []
       },
       "workspacePath": null,
-      "mcp": []
+      "mcp": [
+        "supabase"
+      ]
     },
     {
       "id": "tho-ca",
@@ -76,12 +78,42 @@
           "decide.arcjet.com",
           "askwell-eight.vercel.app",
           "*.vercel.app",
-          "askwell-git-p1f-t01-shared-api-contract-mns-projects-a6d194ae.vercel.app:443"
+          "askwell-git-p1f-t01-shared-api-contract-mns-projects-a6d194ae.vercel.app:443",
+          "clients2.google.com:80",
+          "start.duckduckgo.com:443",
+          "accounts.google.com:443",
+          "connectivitycheck.gstatic.com:80",
+          "edgedl.me.gvt1.com:80",
+          "actual-piranha-9269.accounts.dev:443",
+          "chromereleases.googleblog.com:443",
+          "o449981.ingest.us.sentry.io:443",
+          "cdn.protect.clerk.com:443",
+          "img.clerk.com:443",
+          "api.vercel.com",
+          "1-fmb7nymvke6w42lmfkemgyefcq-rq44h6pvgebl7hb4dhr6pi3che-p.client.protect.clerk.com:443",
+          "1-fmb7nymvke6w42lmfkemgyefcq-rq44h6pvgebl7hb4dhr6pi3che-p.client.protect.clerk.com:8443",
+          "1-fmb7nymvke6w42lmfkemgyefcq-rq44h6pvgebl7hb4dhr6pi3che-p.client.protect.clerk.com:18443",
+          "1-fmb7nymvke6w42lmfkemgyefcq-rq44h6pvgebl7hb4dhr6pi3che-p.client.protect.clerk.com:2082",
+          "1-fmb7nymvke6w42lmfkemgyefcq-rq44h6pvgebl7hb4dhr6pi3che-p.client.protect.clerk.com:992",
+          "1-5yjsmud2iemh5kojh5iynd5sky-kmwy7mobcvbv4bligzxt62y7ya-p.client.protect.clerk.com:443",
+          "1-5yjsmud2iemh5kojh5iynd5sky-kmwy7mobcvbv4bligzxt62y7ya-p.client.protect.clerk.com:8443",
+          "1-5yjsmud2iemh5kojh5iynd5sky-kmwy7mobcvbv4bligzxt62y7ya-p.client.protect.clerk.com:18443",
+          "1-5yjsmud2iemh5kojh5iynd5sky-kmwy7mobcvbv4bligzxt62y7ya-p.client.protect.clerk.com:2082",
+          "1-5yjsmud2iemh5kojh5iynd5sky-kmwy7mobcvbv4bligzxt62y7ya-p.client.protect.clerk.com:992",
+          "api.vercel.com:443",
+          "vercel.live:443",
+          "1-rofpngmylxfq6huduoujb4nfgm-onoc2qkjp7vgnenm5hxrtlldma-p.client.protect.clerk.com:443",
+          "1-rofpngmylxfq6huduoujb4nfgm-onoc2qkjp7vgnenm5hxrtlldma-p.client.protect.clerk.com:8443",
+          "1-rofpngmylxfq6huduoujb4nfgm-onoc2qkjp7vgnenm5hxrtlldma-p.client.protect.clerk.com:18443",
+          "1-rofpngmylxfq6huduoujb4nfgm-onoc2qkjp7vgnenm5hxrtlldma-p.client.protect.clerk.com:2082",
+          "1-rofpngmylxfq6huduoujb4nfgm-onoc2qkjp7vgnenm5hxrtlldma-p.client.protect.clerk.com:992"
         ],
         "deny": []
       },
       "workspacePath": null,
-      "mcp": []
+      "mcp": [
+        "supabase"
+      ]
     },
     {
       "id": "tho-phu",
@@ -115,12 +147,27 @@
           "askwell-eight.vercel.app",
           "*.vercel.app",
           "dhi.io",
-          "googlechromelabs.github.io:443"
+          "googlechromelabs.github.io:443",
+          "clients2.google.com:80",
+          "start.duckduckgo.com:443",
+          "accounts.google.com:443",
+          "connectivitycheck.gstatic.com:80",
+          "edgedl.me.gvt1.com:80",
+          "chromereleases.googleblog.com:443",
+          "cdn.protect.clerk.com:443",
+          "1-44fc3sk7ldioqmte7qwefmkfne-pne4f5avaqcn7w3i7s4mqgup2a-p.client.protect.clerk.com:443",
+          "1-44fc3sk7ldioqmte7qwefmkfne-pne4f5avaqcn7w3i7s4mqgup2a-p.client.protect.clerk.com:992",
+          "1-44fc3sk7ldioqmte7qwefmkfne-pne4f5avaqcn7w3i7s4mqgup2a-p.client.protect.clerk.com:8443",
+          "1-44fc3sk7ldioqmte7qwefmkfne-pne4f5avaqcn7w3i7s4mqgup2a-p.client.protect.clerk.com:2082",
+          "1-44fc3sk7ldioqmte7qwefmkfne-pne4f5avaqcn7w3i7s4mqgup2a-p.client.protect.clerk.com:18443",
+          "vercel.live:443"
         ],
         "deny": []
       },
       "workspacePath": null,
-      "mcp": []
+      "mcp": [
+        "supabase"
+      ]
     }
   ],
   "workflow": {
